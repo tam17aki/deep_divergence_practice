@@ -1,0 +1,66 @@
+directory:
+  root_dir: "/work/tamamori/deep_breg/clustering/"
+  model_dir: "model/"
+
+dataset:
+  circles_noise: 0.05
+  gauss_cov: 0.1
+  factors: [0.2, 0.6, 1.0]  # radii of triple circles
+
+model:
+  emb_normalize: false
+  euc_dist: false
+  euc_squared: True
+  embedding:
+    input_dim: 2
+    hidden_dim: [1000, 500]
+    latent_dim: 2
+
+training:
+  n_trial: 10
+  n_epoch: 50
+  n_batch: 32  # mini-batch size
+  n_train: 500  # number of distributions for training
+  n_test: 200  # number of distributions for test
+  n_points: 50  # number of points per single empirical distribution
+  model_file: "model.pth"
+  model_euc_file: "model_euc.pth"
+  loss_type: "contrastive"  # "triplet" or "contrastive"
+  miner_type: "pair" # "triplet" or "pair"
+  triplet_loss:
+    name: TripletMarginLoss
+    params:
+      margin: 0.2  # 0.05 for default
+  contrastive_loss:
+    name: ContrastiveLoss
+    params:
+      pos_margin: 0
+      neg_margin: 1
+  triplet_miner:
+    name: TripletMarginMiner
+    params:
+      margin: 0.2  # 0.2 for default
+      type_of_triplets: "all" # "all" for default
+  pair_miner:
+    name: PairMarginMiner
+    params:
+      pos_margin: 0.2  # 0.2 for default
+      neg_margin: 0.8  # 0.8 for default
+  reducers:
+    name: ThresholdReducer
+    params:
+      low: 0
+  optim:
+    optimizer:
+      name: Adam
+      params:
+        lr: 1e-4
+        betas: [0.9, 0.99]
+        eps: 1e-08
+
+inference:
+  n_trial: 10
+  n_batch: 32
+  top_k: 5  # number of nearest neighbors
+  n_iter_kmeans: 300
+  n_clusters: 3
