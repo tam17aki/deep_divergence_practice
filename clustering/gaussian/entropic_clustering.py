@@ -115,10 +115,10 @@ class EntropicClustering:
         gamma = [0] * n_samples
         for i in range(n_samples):
             assign = []
-            for k in range(self.n_clusters):
-                burg_div = comp_burg_div(stats["cov"][i], self.cluster_covs[k], dim)
+            for j in range(self.n_clusters):
+                burg_div = comp_burg_div(stats["cov"][i], self.cluster_covs[j], dim)
                 maha_dist = comp_maha_dist(
-                    stats["mean"][i], self.cluster_means[k], self.cluster_covs[k]
+                    stats["mean"][i], self.cluster_means[j], self.cluster_covs[j]
                 )
                 assign.append(burg_div + maha_dist)
             gamma[i] = np.argmin(np.array(assign))
