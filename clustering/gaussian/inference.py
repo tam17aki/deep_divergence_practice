@@ -54,7 +54,7 @@ def main(cfg: DictConfig):
     device = get_device()
     init_manual_seed(0)  # fix seed
 
-    _, embedding = get_model(cfg, device)
+    embedding, _ = get_model(cfg, device)
     load_checkpoint(cfg, embedding)
     embedding.eval()
     all_stats = init_stats()
