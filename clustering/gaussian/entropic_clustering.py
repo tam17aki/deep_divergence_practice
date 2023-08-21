@@ -159,9 +159,9 @@ def get_dataset(cfg, seed):
     stats_test = {"mean": None, "cov": None}
     stats_test["mean"] = [np.mean(point, axis=0) for point in point_list_test]
     stats_test["cov"] = [np.cov(point, rowvar=False) for point in point_list_test]
-    dataset_train = {"stats": stats_train, "labels": train_label}
-    dataset_test = {"stats": stats_test, "labels": test_label}
-    return dataset_train, dataset_test
+    train_dataset = {"stats": stats_train, "labels": train_label}
+    test_dataset = {"stats": stats_test, "labels": test_label}
+    return train_dataset, test_dataset
 
 
 def calc_accuracy(cfg, dataset, module):
@@ -207,14 +207,14 @@ def training_loop(cfg, module):
 def main(cfg):
     """Perform training and calculate metric accuracies."""
     print(OmegaConf.to_yaml(cfg), flush=True)  # dump configuration
-    all_stats = init_stats()
 
     # perform training loops changing random seed for dataset
+    all_stats = init_stats()
     for seed in prg(range(cfg.training.n_trial)):
-        dataset_train, dataset_test = get_dataset(cfg, seed)
-        module = EntropicClustering(dataset_train, cfg.training.n_clusters)
+        train_dataset, test_dataset = get_dataset(cfg, seed)
+        module = EntropicClustering(train_dataset, cfg.training.n_clusters)
         training_loop(cfg, module)
-        append_stats(all_stats, calc_accuracy(cfg, dataset_test, module))
+        append_stats(all_stats, calc_accuracy(cfg, test_dataset, module))
     print_stats(all_stats)
 
 
