@@ -145,7 +145,7 @@ def get_dataset(cfg, seed):
     mean, train_label = make_circles_triple(
         cfg.training.n_train,
         noise=cfg.dataset.circles_noise,
-        random_state=0,
+        random_state=seed,
         factors=cfg.dataset.factors,
     )
     point_list_train = [
@@ -157,7 +157,7 @@ def get_dataset(cfg, seed):
     mean, test_label = make_circles_triple(
         cfg.training.n_test,
         noise=cfg.dataset.circles_noise,
-        random_state=0,
+        random_state=seed,
         factors=cfg.dataset.factors,
     )
     point_list_test = [
