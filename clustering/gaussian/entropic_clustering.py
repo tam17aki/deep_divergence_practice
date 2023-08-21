@@ -127,38 +127,28 @@ class EntropicClustering:
 
 def get_dataset(cfg, seed):
     """Instantiate dataset."""
-    rng = np.random.default_rng(seed=seed)
-    mean, train_label = make_circles_triple(
+    train_mean, train_label = make_circles_triple(
         cfg.training.n_train,
         noise=cfg.dataset.circles_noise,
         random_state=seed,
         factors=cfg.dataset.factors,
     )
-    point_list_train = [
-        mean[i]
-        + np.sqrt(cfg.dataset.gauss_cov)
-        * rng.standard_normal(size=(cfg.training.n_points, 2))
-        for i in range(cfg.training.n_train)
-    ]  # e.g., 500 * 50 = 25,000 points in 2-D
-    mean, test_label = make_circles_triple(
+    test_mean, test_label = make_circles_triple(
         cfg.training.n_test,
         noise=cfg.dataset.circles_noise,
         random_state=seed,
         factors=cfg.dataset.factors,
     )
-    point_list_test = [
-        mean[i]
-        + np.sqrt(cfg.dataset.gauss_cov)
-        * rng.standard_normal(size=(cfg.training.n_points, 2))
-        for i in range(cfg.training.n_test)
-    ]  # e.g., 200 * 50 = 10,000 points in 2-D
-
     stats_train = {"mean": None, "cov": None}
-    stats_train["mean"] = [np.mean(point, axis=0) for point in point_list_train]
-    stats_train["cov"] = [np.cov(point, rowvar=False) for point in point_list_train]
+    stats_train["mean"] = train_mean
+    stats_train["cov"] = [
+        np.sqrt(cfg.dataset.gauss_cov) * np.eye(2) for _ in range(cfg.training.n_train)
+    ]
     stats_test = {"mean": None, "cov": None}
-    stats_test["mean"] = [np.mean(point, axis=0) for point in point_list_test]
-    stats_test["cov"] = [np.cov(point, rowvar=False) for point in point_list_test]
+    stats_test["mean"] = test_mean
+    stats_test["cov"] = [
+        np.sqrt(cfg.dataset.gauss_cov) * np.eye(2) for _ in range(cfg.training.n_test)
+    ]
     train_dataset = {"stats": stats_train, "labels": train_label}
     test_dataset = {"stats": stats_test, "labels": test_label}
     return train_dataset, test_dataset
