@@ -20,6 +20,7 @@ training:
   n_trial: 10
   n_epoch: 50
   n_batch: 32  # mini-batch size
+  n_clusters: 3  # number of clusters
   n_train: 500  # number of distributions for training
   n_test: 200  # number of distributions for test
   n_points: 50  # number of points per single empirical distribution
