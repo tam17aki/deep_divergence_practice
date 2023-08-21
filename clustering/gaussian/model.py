@@ -39,13 +39,11 @@ class Embedding(nn.Module):
         latent_dim = cfg.model.embedding.latent_dim
         self.layers = nn.Sequential(
             nn.Linear(input_dim, hidden_dim[0]),  # 2 -> 1000
-            nn.LayerNorm(hidden_dim[0]),
             nn.ReLU(),
             nn.Linear(hidden_dim[0], hidden_dim[1]),  # 1000 -> 500
-            nn.LayerNorm(hidden_dim[1]),
             nn.ReLU(),
         )
-        self.fc_out = nn.Linear(hidden_dim[1], latent_dim)
+        self.fc_out = nn.Linear(hidden_dim[1], latent_dim)  # 500 -> 2
         self.cfg = cfg
 
     def forward(self, inputs):
@@ -167,6 +165,7 @@ class MomentMatching(BaseDistance):
 
 def get_model(cfg, device):
     """Instantiate metric and embedding functions."""
+    embedding = Embedding(cfg).to(device)
     if cfg.model.euc_dist:
         metric = EuclideanDistance(
             squared=cfg.model.euc_squared, normalize_embeddings=cfg.model.emb_normalize
@@ -175,5 +174,4 @@ def get_model(cfg, device):
         metric = MomentMatching(
             cfg=cfg, normalize_embeddings=cfg.model.emb_normalize
         ).to(device)
-    embedding = Embedding(cfg).to(device)
-    return metric, embedding
+    return embedding, metric
