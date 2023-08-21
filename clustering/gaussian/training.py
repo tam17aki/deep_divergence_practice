@@ -38,7 +38,7 @@ from util import (append_stats, calc_accuracy, get_device, init_manual_seed,
 
 def get_training_modules(cfg: DictConfig, device):
     """Instantiate modules for training."""
-    metric, embedding = get_model(cfg, device)
+    embedding, metric = get_model(cfg, device)
     optimizer = get_optimizer(cfg, embedding, metric)
     loss_func, mining_func = get_loss_miner(cfg, metric)
     TrainingModules = namedtuple(
