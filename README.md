@@ -9,11 +9,11 @@ Copyright (C) 2023 Akira Tamamori
 ## Dependencies
 We tested the implemention on Ubuntu 22.04. The verion of Python was `3.10.12`. The following modules are required:
 
-- torch
-- hydra-core
+- PyTorch (torch)
+- Hydra (hydra-core)
 - progressbar2
-- numpy
-- sklearn
+- Numpy (numpy)
+- scikit-learn (sklearn)
 - [pytorch-metric-learning](https://github.com/KevinMusgrave/pytorch-metric-learning#installation) 
 - faiss-gpu https://pypi.org/project/faiss-gpu/
 
