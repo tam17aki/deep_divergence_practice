@@ -35,8 +35,9 @@ from dataset import make_circles_triple
 from util import append_stats, init_stats, one_hot, print_stats, purity_score
 
 
-def comp_burg_div(mat_x, mat_y, dim):
+def comp_burg_div(mat_x, mat_y):
     """Compute Burg matrix divergence."""
+    dim = mat_x.shape[0]
     mat_y_inv = LA.inv(mat_y)
     mat = mat_x @ mat_y_inv
     burg_div = np.trace(mat) - np.log(LA.det(mat)) - dim
@@ -56,36 +57,30 @@ class EntropicClustering:
     Information Processing Systems (NIPS), 2006.
     """
 
-    def __init__(self, dataset, n_clusters):
+    def __init__(self, cfg, seed):
         """Initialize class."""
-        # a dictionary of stats from empirical distribution
-        self.stats = dataset["stats"]
-        self.labels = dataset["labels"]
-        self.n_clusters = n_clusters
-
-        self.n_samples = len(self.stats["mean"])
-        rng = np.random.default_rng(0)
+        self.n_clusters = cfg.training.n_clusters
+        self.n_samples = cfg.training.n_train
+        self.n_epoch = cfg.training.n_epoch
+        rng = np.random.default_rng(seed)
         self.gamma = rng.choice(self.n_clusters, self.n_samples)  # cluster assignments
-
+        self.stats = {"mean": None, "cov": None}
         self.cluster_means = [None] * self.n_clusters
         self.cluster_covs = [None] * self.n_clusters
 
-    def estep(self):
+    def _estep(self):
         """Assign each Gaussian to the closest cluster representative Gaussian."""
-        dim = self.stats["cov"][0].shape[0]
         for i in range(self.n_samples):
             assign = []
             for j in range(self.n_clusters):
-                burg_div = comp_burg_div(
-                    self.stats["cov"][i], self.cluster_covs[j], dim
-                )
+                burg_div = comp_burg_div(self.stats["cov"][i], self.cluster_covs[j])
                 maha_dist = comp_maha_dist(
                     self.stats["mean"][i], self.cluster_means[j], self.cluster_covs[j]
                 )
                 assign.append(burg_div + maha_dist)
             self.gamma[i] = np.argmin(np.array(assign))
 
-    def mstep(self):
+    def _mstep(self):
         """Update cluster means and cluster covariances."""
         for j in range(self.n_clusters):
             idx = np.argwhere(self.gamma == j).squeeze()
@@ -104,21 +99,33 @@ class EntropicClustering:
                 cluster_covs += self.stats["cov"][i] + diff * diff.T
             self.cluster_covs[j] = cluster_covs / n_count
 
-    def inference(self, stats):
-        """Perform inference of assignment.
+    def fit(self, means, covs):
+        """Fit module.
 
         Args:
-           stats: dictironary of mean and cov.
+           means: list of mean vectors.
+           covs: list of covariance matrices.
         """
-        dim = stats["cov"][0].shape[0]
-        n_samples = len(stats["mean"])
+        self.stats = {"mean": means, "cov": covs}
+        for _ in range(self.n_epoch):
+            self._mstep()  # update cluster means/covariances
+            self._estep()  # update assignment
+
+    def predict(self, means, covs):
+        """Predict assignment.
+
+        Args:
+            means: list of mean vectors.
+            covs: list of covariance matrices.
+        """
+        n_samples = len(means)
         gamma = [0] * n_samples
         for i in range(n_samples):
             assign = []
             for j in range(self.n_clusters):
-                burg_div = comp_burg_div(stats["cov"][i], self.cluster_covs[j], dim)
+                burg_div = comp_burg_div(covs[i], self.cluster_covs[j])
                 maha_dist = comp_maha_dist(
-                    stats["mean"][i], self.cluster_means[j], self.cluster_covs[j]
+                    means[i], self.cluster_means[j], self.cluster_covs[j]
                 )
                 assign.append(burg_div + maha_dist)
             gamma[i] = np.argmin(np.array(assign))
@@ -139,31 +146,27 @@ def get_dataset(cfg, seed):
         random_state=seed,
         factors=cfg.dataset.factors,
     )
-    stats_train = {"mean": None, "cov": None}
-    stats_train["mean"] = train_mean
-    stats_train["cov"] = [
+    train_stats = {"mean": None, "cov": None}
+    train_stats["mean"] = train_mean
+    train_stats["cov"] = [
         np.sqrt(cfg.dataset.gauss_cov) * np.eye(2) for _ in range(cfg.training.n_train)
     ]
-    stats_test = {"mean": None, "cov": None}
-    stats_test["mean"] = test_mean
-    stats_test["cov"] = [
+    test_stats = {"mean": None, "cov": None}
+    test_stats["mean"] = test_mean
+    test_stats["cov"] = [
         np.sqrt(cfg.dataset.gauss_cov) * np.eye(2) for _ in range(cfg.training.n_test)
     ]
-    train_dataset = {"stats": stats_train, "labels": train_label}
-    test_dataset = {"stats": stats_test, "labels": test_label}
-    return train_dataset, test_dataset
+    return train_stats, train_label, test_stats, test_label
 
 
-def calc_accuracy(cfg, dataset, module):
+def calc_accuracy(cfg, label, stats, module):
     """Compute various accuracy metrics.
 
     Args:
-        cfg: configuration.
-        dataset (dict): dictionary of stats and labels.
-        module (EntropicClustering): clustering module.
+        label: reference labels.
+        stats (dict): means and covariances for each observation.
     """
-    label = dataset["labels"]
-    pred = module.inference(dataset["stats"])
+    pred = module.predict(stats["mean"], stats["cov"])
     return {
         "ri": rand_score(label, pred),
         "ari": adjusted_rand_score(label, pred),
@@ -181,31 +184,26 @@ def calc_accuracy(cfg, dataset, module):
     }
 
 
-def training_loop(cfg, module):
-    """Perform training loop.
-
-    Args:
-        cfg: configuration.
-        module (EntropicClustering): clustering module.
-    """
-    for _ in range(cfg.training.n_epoch):
-        # perform differential entropic clustering
-        module.mstep()  # update cluster means/covariances
-        module.estep()  # update assignment
-
-
 def main(cfg):
     """Perform training and calculate metric accuracies."""
     print(OmegaConf.to_yaml(cfg), flush=True)  # dump configuration
 
     # perform training loops changing random seed for dataset
-    all_stats = init_stats()
+    metrics = {"train": init_stats(), "test": init_stats()}
     for seed in prg(range(cfg.training.n_trial)):
-        train_dataset, test_dataset = get_dataset(cfg, seed)
-        module = EntropicClustering(train_dataset, cfg.training.n_clusters)
-        training_loop(cfg, module)
-        append_stats(all_stats, calc_accuracy(cfg, test_dataset, module))
-    print_stats(all_stats)
+        train_stats, train_label, test_stats, test_label = get_dataset(cfg, seed)
+        module = EntropicClustering(cfg, seed)
+        module.fit(train_stats["mean"], train_stats["cov"])
+        append_stats(
+            metrics["train"], calc_accuracy(cfg, train_label, train_stats, module)
+        )
+        append_stats(
+            metrics["test"], calc_accuracy(cfg, test_label, test_stats, module)
+        )
+    print("\nResult (Training)", end="")
+    print_stats(metrics["train"])
+    print("\nResult (Test)", end="")
+    print_stats(metrics["train"])
 
 
 if __name__ == "__main__":
