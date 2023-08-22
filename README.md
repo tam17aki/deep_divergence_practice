@@ -21,4 +21,4 @@ We tested the implemention on Ubuntu 22.04. The verion of Python was `3.10.12`. 
 - `clustering` ... Corresponding to the Section 5.1.
 
 ## References
-[1] H. K. Cilingir, R. Manzelli, and B. Kulis, “Deep divergence learning,” in ICML, 2020.
+[1] H. K. Cilingir, R. Manzelli, and B. Kulis, “Deep divergence learning,” in ICML, 2020.　http://proceedings.mlr.press/v119/cilingir20a.html
