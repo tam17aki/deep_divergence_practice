@@ -21,6 +21,8 @@ You can change loss type and miner type by editing `config.yaml`.
 
 4. Run `entropic_clustering.py`. It performs training and prediction of the method proposed by "Davis & Dhillon" [1].
 
+You can run `plot_dataset.py` to plot the dataset. You can also run `plot_embedding.py` to plot embeddings with trained model.
+
 ## Reference
 [1] Jason V. Davis and Inderjit Dhillon, "Differential entropic
     clustering of multivariate Gaussians," In Advances in Neural
