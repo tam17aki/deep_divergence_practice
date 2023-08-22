@@ -15,4 +15,6 @@ We tested the implemention on Ubuntu 22.04. The verion of Python was `3.10.12`. 
 
 2. Run `training.py`. It performs model training.
 
-3. Run `inference.py`. It performs inference using trained model (i.e., generate audios from onomatopoeia).
+3. Run `inference.py`. It performs inference using trained model.
+
+You can change loss type and miner type by editing `config.yaml`.
