@@ -84,9 +84,11 @@ class EntropicClustering:
         """Update cluster means and cluster covariances."""
         for j in range(self.n_clusters):
             idx = np.argwhere(self.gamma == j).squeeze()
-            n_count = len(idx)
+            n_count = len(np.where(self.gamma == j)[0])
             if n_count == 0:
                 continue
+            if n_count == 1:
+                idx = [idx]
 
             cluster_means = np.zeros_like(self.stats["mean"][0])
             for i in idx:
