@@ -31,8 +31,7 @@ from progressbar import progressbar as prg
 from dataset import get_dataset
 from factory import get_loss_miner, get_optimizer
 from model import get_model
-from util import (append_stats, calc_accuracy, get_device, init_manual_seed,
-                  init_stats, print_stats, save_checkpoint)
+from util import get_device, init_manual_seed, save_checkpoint
 
 
 def get_training_modules(cfg: DictConfig, device):
@@ -50,7 +49,7 @@ def get_training_modules(cfg: DictConfig, device):
 def training_loop(cfg: DictConfig, dataset, modules, device):
     """Perform training loop."""
     dataloader = torch.utils.data.DataLoader(
-        dataset, batch_size=cfg.training.n_batch, shuffle=True
+        dataset, batch_size=cfg.training.n_batch, shuffle=True, drop_last=True
     )
     embedding, optimizer, loss_func, mining_func = modules
     embedding.train()
@@ -75,18 +74,11 @@ def main(cfg: DictConfig):
     init_manual_seed(0)  # fix seed
 
     # perform training loops changing random seed for dataset
-    all_stats = init_stats()
     for seed in prg(range(cfg.training.n_trial)):
-        train_dataset, test_dataset = get_dataset(cfg, seed)
+        train_dataset, _ = get_dataset(cfg, seed)
         modules = get_training_modules(cfg, device)  # instantiate modules for training
         training_loop(cfg, train_dataset, modules, device)
-        append_stats(
-            all_stats,
-            calc_accuracy(cfg, train_dataset, test_dataset, modules.embedding, seed),
-        )
         save_checkpoint(cfg, modules.embedding, seed)
-
-    print_stats(all_stats)
 
 
 if __name__ == "__main__":
