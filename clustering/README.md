@@ -1,4 +1,4 @@
-## Python code to reproduce experimental results of clustering
+## Python code to reproduce experimental results of distributional clustering
 
 This directory corresponds to the Section 5.1.
 
