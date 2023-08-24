@@ -26,10 +26,9 @@ import numpy as np
 from hydra import compose, initialize
 from omegaconf import DictConfig
 
-from inference import load_checkpoint
 from inference_fair_comparison import get_dataset, get_embeddings
 from model import get_model
-from util import get_device, init_manual_seed
+from util import get_device, init_manual_seed, load_checkpoint
 
 
 def plot_result(cfg, train_dataset, test_dataset, model):
