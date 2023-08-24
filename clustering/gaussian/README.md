@@ -22,8 +22,8 @@ The experimental results are shown in the following; averaged over 10 runs while
 | Method (loss function)| Mean | Std dev. |
 | --- | --- | --- |
 | Davis & Dhillon | 0.649826 | 0.008840 |
-| baseline</span> (constrative loss) | 0.620323 | 0.008871 |
-| proposed</span> (constrative loss) | **0.988618** | 0.010007 |
+| baseline</span> (constrative loss) | 0.650168 | 0.013206 |
+| proposed</span> (constrative loss) | **0.988035** | 0.011927 |
 | baseline</span> (triplet loss) | 0.657529 | 0.012002 |
 | proposed</span> (triplet loss) | **0.991387** | 0.009460 |
 
@@ -32,8 +32,8 @@ The experimental results are shown in the following; averaged over 10 runs while
 | Method (loss function)| Mean | Std dev. |
 | --- | --- | --- |
 | Davis & Dhillon | 0.241574 | 0.009874 |
-| baseline (constrative loss) | 0.151678 | 0.019009 |
-| proposed (constrative loss) | **0.974359** | 0.022572 |
+| baseline (constrative loss) | 0.238745 | 0.030552 |
+| proposed (constrative loss) | **0.973040** | 0.026887 |
 | baseline (triplet loss) | 0.238126 | 0.028162 |
 | proposed (triplet loss) | **0.980598** | 0.021340 |
 
@@ -43,9 +43,9 @@ In order to make a fair comparison, **a mean vector was calculated for the basel
 
 | Metrics (loss function)| Mean | Std dev. |
 | --- | --- | --- |
-|RI (constrative loss) | 0.690658 | 0.059791 |
+|RI (constrative loss) | 0.814276 | 0.022223 |
 |RI (triplet loss) | 0.899719 | 0.019978 |
-|ARI (constrative loss) | 0.329533  | 0.095221 |
+|ARI (constrative loss) | 0.604732 | 0.043438 |
 |ARI (triplet loss) | 0.775881 | 0.044944 |
 
 It can be seen that **the scores have certainly improved, but it is still low compared to the proposed**. I believe that these results have finally demonstrated the effectiveness of the proposed.
