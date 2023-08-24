@@ -39,7 +39,7 @@ The experimental results are shown in the following; averaged over 10 runs while
 
 I could reproduce almost the sample results. However, I consider that this experiment is **not a fair comparison** between the baseline and the proposed method. Because the baseline clusters all 25,000 (= 500 * 50) points, whereas the proposed method clusters only 500 points, putting the baseline at a huge disadvantage. We can obtain the above results with `training.py` and `inference.py`.
 
-In order to make a fair comparison, **a mean vector was calculated for the baseline in units of the empirical distribution after embedding**, and the resulting 500 points were clustered. The re-calculated metrics of the baseline are shown in the following table.
+In order to make a fair comparison, also for the baseline, **I compute a mean vector in units of the empirical distribution after embedding**, and the resulting 500 points were clustered. The re-calculated metrics of the baseline are shown in the following table.
 
 | Metrics (loss function)| Mean | Std dev. |
 | --- | --- | --- |
