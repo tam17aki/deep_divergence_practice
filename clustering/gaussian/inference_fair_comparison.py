@@ -34,11 +34,10 @@ from sklearn.metrics.cluster import (adjusted_mutual_info_score,
                                      normalized_mutual_info_score, rand_score)
 
 from dataset import DistributionDataset, make_circles_triple
-from inference import load_checkpoint
 from model import get_model
 from util import (KMeans, KNeighborsClassifier, append_stats, get_device,
-                  init_manual_seed, init_stats, one_hot, print_stats,
-                  purity_score)
+                  init_manual_seed, init_stats, load_checkpoint, one_hot,
+                  print_stats, purity_score)
 
 warnings.simplefilter("ignore", UserWarning)
 
