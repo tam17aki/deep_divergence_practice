@@ -23,6 +23,18 @@ You can change loss type and miner type by editing `config.yaml`.
 
 You can run `plot_dataset.py` to plot the dataset. You can also run `plot_embedding.py` to plot embeddings with trained model.
 
+## Results
+
+| Method (loss function)| Mean | Std dev. |
+| --- | --- | --- |
+| Davis & Dhillon | 0.649826 | 0.008840 |
+| baseline</span> (constrative loss) | 0.619134 | 0.007905 |
+| proposed</span> (constrative loss) | **0.987221** | 0.010623 |
+| baseline</span> (triplet loss) | 0.657524 | 0.012132 |
+| proposed</span> (triplet loss) | **0.986799** | 0.009837 |
+
+I could reproduce almost the sample results. However, I believe that this experiment is **not a fair comparison** between baseline and proposed. Because the baseline clusters all 25,000 (= 500 * 50) points, whereas the proposed clusters only 500 points, putting baseline at a huge disadvantage.
+
 ## Reference
 [1] Jason V. Davis and Inderjit Dhillon, "Differential entropic
     clustering of multivariate Gaussians," In Advances in Neural
