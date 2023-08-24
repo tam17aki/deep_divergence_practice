@@ -21,34 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import os
-import warnings
-
 import matplotlib.pyplot as plt
 import numpy as np
-import torch
 from hydra import compose, initialize
 from omegaconf import DictConfig
 
 from dataset import get_dataset
+from inference import load_checkpoint
 from model import get_model
 from util import get_device, init_manual_seed
 
-warnings.simplefilter("ignore", UserWarning)
 
-
-def load_checkpoint(cfg: DictConfig, model):
-    """Load checkpoint."""
-    model_dir = os.path.join(cfg.directory.root_dir, cfg.directory.model_dir)
-    if cfg.model.euc_dist is False:  # moment matching
-        model_file = os.path.join(model_dir, cfg.training.model_file)
-    else:  # Euclidean distance
-        model_file = os.path.join(model_dir, cfg.training.model_euc_file)
-    checkpoint = torch.load(model_file)
-    model.load_state_dict(checkpoint)
-
-
-def plot_result(train_dataset, test_dataset, model):
+def plot_result(cfg, train_dataset, test_dataset, model):
     """Plot clustering result."""
     embeds = {"train": None, "test": None}
     labels = {"train": None, "test": None}
@@ -56,31 +40,42 @@ def plot_result(train_dataset, test_dataset, model):
     model.eval()
     embeds["train"], labels["train"] = model.get_embeddings(train_dataset)
     embeds["test"], labels["test"] = model.get_embeddings(test_dataset)
-    embeds["train"] = embeds["train"].to("cpu").detach().numpy().copy()
-    labels["train"] = labels["train"].to("cpu").detach().numpy().copy()
-    embeds["test"] = embeds["test"].to("cpu").detach().numpy().copy()
-    labels["test"] = labels["test"].to("cpu").detach().numpy().copy()
 
-    for n in np.unique(labels["train"]):
+    embeds_train = embeds["train"].to("cpu").detach().numpy().copy()
+    labels_train = labels["train"].to("cpu").detach().numpy().copy()
+    embeds_test = embeds["test"].to("cpu").detach().numpy().copy()
+    labels_test = labels["test"].to("cpu").detach().numpy().copy()
+
+    for cluster_id in np.unique(labels_train):
         plt.scatter(
-            embeds["train"][labels["train"] == n, 0],
-            embeds["train"][labels["train"] == n, 1],
+            embeds_train[labels_train == cluster_id, 0],
+            embeds_train[labels_train == cluster_id, 1],
             s=1,
-            label=f"cluster {n}",
+            label=f"cluster {cluster_id}",
         )
     plt.legend()
-    plt.title("Embedding on training data")
+    plt.title(f"Embedding on train data ({cfg.training.loss_type} loss)")
+    if cfg.model.euc_dist is False:
+        plt.savefig(cfg.training.loss_type + "_" + cfg.inference.embed_fig_file)
+    else:
+        plt.savefig(cfg.training.loss_type + "_" + cfg.inference.embed_fig_euc_file)
     plt.show()
 
-    for n in np.unique(labels["test"]):
+    for cluster_id in np.unique(labels_test):
         plt.scatter(
-            embeds["test"][labels["test"] == n, 0],
-            embeds["test"][labels["test"] == n, 1],
+            embeds_test[labels_test == cluster_id, 0],
+            embeds_test[labels_test == cluster_id, 1],
             s=1,
-            label=f"cluster {n}",
+            label=f"cluster {cluster_id}",
         )
     plt.legend()
-    plt.title("Embedding on test data")
+    plt.title(f"Embedding on test data ({cfg.training.loss_type} loss)")
+    if cfg.model.euc_dist is False:
+        plt.savefig(cfg.training.loss_type + "_" + cfg.inference.embed_test_fig_file)
+    else:
+        plt.savefig(
+            cfg.training.loss_type + "_" + cfg.inference.embed_test_fig_euc_file
+        )
     plt.show()
 
 
@@ -93,7 +88,7 @@ def main(cfg: DictConfig):
     load_checkpoint(cfg, embedding)
     embedding.eval()
     train_dataset, test_dataset = get_dataset(cfg, 0)
-    plot_result(train_dataset, test_dataset, embedding)
+    plot_result(cfg, train_dataset, test_dataset, embedding)
 
 
 if __name__ == "__main__":
