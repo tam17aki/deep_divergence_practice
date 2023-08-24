@@ -100,7 +100,7 @@ def get_embeddings(cfg, model, dataset):
     end = 0
     for i, batch in enumerate(dataloader):
         data, label = batch
-        data, label = data.to(device).float(), label.to(device).long()
+        data, label = data.float().to(device), label.long().to(device)
         data = data.mean(dim=1)
         embed = model.forward(data)
         if i == 0:
