@@ -32,7 +32,7 @@ from util import get_device, init_manual_seed, load_checkpoint
 
 
 def plot_result(cfg, train_dataset, test_dataset, model):
-    """Plot clustering result."""
+    """Plot embeddings."""
     embeds = {"train": None, "test": None}
     labels = {"train": None, "test": None}
 
