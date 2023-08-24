@@ -37,7 +37,7 @@ The experimental results are shown in the following; averaged over 10 runs while
 | baseline (triplet loss) | 0.238126 | 0.028162 |
 | proposed (triplet loss) | **0.980598** | 0.021340 |
 
-I could reproduce almost the sample results. However, I consider that this experiment is **not a fair comparison** between the baseline and the proposed. Because the baseline clusters all 25,000 (= 500 * 50) points, whereas the proposed clusters only 500 points, putting the baseline at a huge disadvantage. We can obtain the above results with `training.py` and `inference.py`.
+I could reproduce almost the sample results. However, I consider that this experiment is **not a fair comparison** between the baseline and the proposed method. Because the baseline clusters all 25,000 (= 500 * 50) points, whereas the proposed method clusters only 500 points, putting the baseline at a huge disadvantage. We can obtain the above results with `training.py` and `inference.py`.
 
 In order to make a fair comparison, **a mean vector was calculated for the baseline in units of the empirical distribution after embedding**, and the resulting 500 points were clustered. The results are shown in the following table.
 
@@ -48,7 +48,7 @@ In order to make a fair comparison, **a mean vector was calculated for the basel
 |ARI (constrative loss) | 0.604732 | 0.043438 |
 |ARI (triplet loss) | 0.775881 | 0.044944 |
 
-It can be seen that **the scores have certainly improved, but it is still low compared to the proposed**. I believe that these results have finally demonstrated the effectiveness of the proposed.
+It can be seen that **the scores have certainly improved, but it is still low compared to the proposed method**. I believe that these results have finally demonstrated the effectiveness of the proposed method.
 We can obtain the above results with `inference_fair_comparison.py`. For visualization of embeddings, you can use `plot_embedding_fair_comparison.py`.
 
 ## Reference
