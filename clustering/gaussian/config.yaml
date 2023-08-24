@@ -1,6 +1,7 @@
 directory:
   root_dir: "/work/tamamori/deep_breg/clustering/"
   model_dir: "model/"
+  image_dir: "img/"
 
 dataset:
   circles_noise: 0.05
