@@ -43,12 +43,12 @@ In order to make a fair comparison, **a mean vector was calculated for the basel
 
 | Metrics (loss function)| Mean | Std dev. |
 | --- | --- | --- |
-|RI (constrative loss) | 0.814276 | 0.022223 |
-|RI (triplet loss) | 0.899719 | 0.019978 |
-|ARI (constrative loss) | 0.604732 | 0.043438 |
-|ARI (triplet loss) | 0.775881 | 0.044944 |
+|RI (constrative loss) | 0.972352 | 0.017127 |
+|RI (triplet loss) | 0.986995 | 0.005775 |
+|ARI (constrative loss) | 0.937757 | 0.038647 |
+|ARI (triplet loss) | 0.970741 | 0.013020 |
 
-It can be seen that **the scores have certainly improved, but it is still low compared to the proposed method**. I believe that these results have finally demonstrated the effectiveness of the proposed method.
+It can be seen that the scores has been improved significantly and **achieve almost equal level compared to the proposed method**, but the "average" was still slightly worse. I believe that these results have finally demonstrated the effectiveness of the proposed method.
 We can obtain the above results with `inference_fair_comparison.py`. For visualization of embeddings, you can use `plot_embedding_fair_comparison.py`.
 
 ## Reference
