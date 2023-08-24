@@ -21,6 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 from hydra import compose, initialize
@@ -64,6 +66,9 @@ def plot_cloud(cfg):
         idx = np.where(labels == lab)[0]
         axes[4].scatter(points[idx, 0], points[idx, 1], s=1)
     fig.tight_layout()
+    image_dir = os.path.join(cfg.directory.root_dir, cfg.directory.image_dir)
+    os.makedirs(image_dir, exist_ok=True)
+    plt.savefig(os.path.join(image_dir, cfg.inference.dataset_fig_file))
     plt.show()
 
 
