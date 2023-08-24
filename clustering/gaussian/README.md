@@ -23,9 +23,9 @@ The experimental results are shown in the following; averaged over 10 runs while
 | --- | --- | --- |
 | Davis & Dhillon | 0.649826 | 0.008840 |
 | baseline</span> (constrative loss) | 0.650168 | 0.013206 |
-| proposed</span> (constrative loss) | **0.988035** | 0.011927 |
+| proposed</span> (constrative loss) | **0.990864** | 0.007971 |
 | baseline</span> (triplet loss) | 0.657529 | 0.012002 |
-| proposed</span> (triplet loss) | **0.991387** | 0.009460 |
+| proposed</span> (triplet loss) | **0.992834** | 0.006162 |
 
 * Adjusted Rand Index (ARI)
 
@@ -33,9 +33,9 @@ The experimental results are shown in the following; averaged over 10 runs while
 | --- | --- | --- |
 | Davis & Dhillon | 0.241574 | 0.009874 |
 | baseline (constrative loss) | 0.238745 | 0.030552 |
-| proposed (constrative loss) | **0.973040** | 0.026887 |
+| proposed (constrative loss) | **0.979434** | 0.017977 |
 | baseline (triplet loss) | 0.238126 | 0.028162 |
-| proposed (triplet loss) | **0.980598** | 0.021340 |
+| proposed (triplet loss) | **0.983881** | 0.013887 |
 
 I could reproduce almost the sample results. However, I consider that this experiment is **not a fair comparison** between the baseline and the proposed method. Because the baseline clusters all 25,000 (= 500 * 50) points, whereas the proposed method clusters only 500 points, putting the baseline at a huge disadvantage. We can obtain the above results with `training.py` and `inference.py`.
 
