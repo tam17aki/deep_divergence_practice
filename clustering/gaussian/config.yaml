@@ -65,3 +65,8 @@ inference:
   top_k: 5  # number of nearest neighbors
   n_iter_kmeans: 300
   n_clusters: 3
+  dataset_fig_file: "dataset.png"
+  embed_fig_file: "embed_train.png"
+  embed_fig_euc_file: "embed_train_euc.png"
+  embed_test_fig_file: "embed_test.png"
+  embed_test_fig_euc_file: "embed_test_euc.png"
