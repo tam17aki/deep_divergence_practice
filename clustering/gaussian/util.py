@@ -22,6 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import os
 import warnings
 
 import faiss
@@ -253,3 +254,37 @@ def print_stats(stats):
         f"ROC AUC (one-vs-rest) = {means['auc_ovr']:.06f} ± {stds['auc_ovr']:.06f}\n"
         f"ROC AUC (one-vs-one) = {means['auc_ovo']:.06f} ± {stds['auc_ovo']:.06f}\n"
     )
+
+
+def load_checkpoint(cfg, model, seed=0):
+    """Load checkpoint."""
+    model_dir = os.path.join(cfg.directory.root_dir, cfg.directory.model_dir)
+    if cfg.model.euc_dist is False:  # moment matching
+        model_file = (
+            cfg.training.loss_type + "_" + f"seed{seed}_" + cfg.training.model_file
+        )
+        model_file = os.path.join(model_dir, model_file)
+    else:  # Euclidean distance
+        model_file = (
+            cfg.training.loss_type + "_" + f"seed{seed}_" + cfg.training.model_euc_file
+        )
+        model_file = os.path.join(model_dir, model_file)
+    checkpoint = torch.load(model_file)
+    model.load_state_dict(checkpoint)
+
+
+def save_checkpoint(cfg, model, seed=0):
+    """Save checkpoint."""
+    model_dir = os.path.join(cfg.directory.root_dir, cfg.directory.model_dir)
+    os.makedirs(model_dir, exist_ok=True)
+    if cfg.model.euc_dist is False:  # moment matching
+        model_file = (
+            cfg.training.loss_type + "_" + f"seed{seed}_" + cfg.training.model_file
+        )
+        model_file = os.path.join(model_dir, model_file)
+    else:  # Euclidean distance
+        model_file = (
+            cfg.training.loss_type + "_" + f"seed{seed}_" + cfg.training.model_euc_file
+        )
+        model_file = os.path.join(model_dir, model_file)
+    torch.save(model.state_dict(), model_file)
