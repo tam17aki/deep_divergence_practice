@@ -25,6 +25,8 @@ You can run `plot_dataset.py` to plot the dataset. You can also run `plot_embedd
 
 ## Results
 
+The experimental results are shown in the following; averaged over 10 runs while changing random seed value.
+
 * Rand Index (RI)
 
 | Method (loss function)| Mean | Std dev. |
