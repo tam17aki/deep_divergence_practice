@@ -69,18 +69,20 @@ def training_loop(cfg: DictConfig, dataset, modules, device):
             optimizer.step()
 
 
-def save_checkpoint(cfg: DictConfig, model):
+def save_checkpoint(cfg: DictConfig, model, seed=0):
     """Save checkpoint."""
     model_dir = os.path.join(cfg.directory.root_dir, cfg.directory.model_dir)
     os.makedirs(model_dir, exist_ok=True)
     if cfg.model.euc_dist is False:  # moment matching
-        model_file = os.path.join(
-            model_dir, cfg.training.loss_type + "_" + cfg.training.model_file
+        model_file = (
+            cfg.training.loss_type + "_" + f"seed{seed}_" + cfg.training.model_file
         )
+        model_file = os.path.join(model_dir, model_file)
     else:  # Euclidean distance
-        model_file = os.path.join(
-            model_dir, cfg.training.loss_type + "_" + cfg.training.model_euc_file
+        model_file = (
+            cfg.training.loss_type + "_" + f"seed{seed}_" + cfg.training.model_euc_file
         )
+        model_file = os.path.join(model_dir, model_file)
     torch.save(model.state_dict(), model_file)
 
 
@@ -100,8 +102,7 @@ def main(cfg: DictConfig):
             all_stats,
             calc_accuracy(cfg, train_dataset, test_dataset, modules.embedding, seed),
         )
-        if seed == 0:
-            save_checkpoint(cfg, modules.embedding)
+        save_checkpoint(cfg, modules.embedding, seed)
 
     print_stats(all_stats)
 
