@@ -22,20 +22,20 @@ The experimental results are shown in the following; averaged over 10 runs while
 | Method (loss function)| Mean | Std dev. |
 | --- | --- | --- |
 | Davis & Dhillon | 0.649826 | 0.008840 |
-| baseline</span> (constrative loss) | 0.619134 | 0.007905 |
-| proposed</span> (constrative loss) | **0.987221** | 0.010623 |
-| baseline</span> (triplet loss) | 0.657524 | 0.012132 |
-| proposed</span> (triplet loss) | **0.986799** | 0.009837 |
+| baseline</span> (constrative loss) | 0.620323 | 0.008871 |
+| proposed</span> (constrative loss) | **0.988618** | 0.010007 |
+| baseline</span> (triplet loss) | 0.657529 | 0.012002 |
+| proposed</span> (triplet loss) | **0.991387** | 0.009460 |
 
 * Adjusted Rand Index (ARI)
 
 | Method (loss function)| Mean | Std dev. |
 | --- | --- | --- |
 | Davis & Dhillon | 0.241574 | 0.009874 |
-| baseline (constrative loss) | 0.149356 | 0.018237 |
-| proposed (constrative loss) | **0.971196** | 0.023947 |
-| baseline (triplet loss) | 0.238092 | 0.029025 |
-| proposed (triplet loss) | **0.970267** | 0.022193 |
+| baseline (constrative loss) | 0.151678 | 0.019009 |
+| proposed (constrative loss) | **0.974359** | 0.022572 |
+| baseline (triplet loss) | 0.238126 | 0.028162 |
+| proposed (triplet loss) | **0.980598** | 0.021340 |
 
 I could reproduce almost the sample results. However, I consider that this experiment is **not a fair comparison** between the baseline and the proposed. Because the baseline clusters all 25,000 (= 500 * 50) points, whereas the proposed clusters only 500 points, putting the baseline at a huge disadvantage. We can obtain the above results with `training.py` and `inference.py`.
 
@@ -43,10 +43,10 @@ In order to make a fair comparison, **a mean vector was calculated for the basel
 
 | Metrics (loss function)| Mean | Std dev. |
 | --- | --- | --- |
-|RI (constrative loss) | 0.710910 | 0.020216 |
-|RI (triplet loss) | 0.901598 | 0.022337 |
-|ARI (constrative loss) | 0.360987  | 0.043097 |
-|ARI (triplet loss) | 0.780103 | 0.049799 |
+|RI (constrative loss) | 0.690658 | 0.059791 |
+|RI (triplet loss) | 0.899719 | 0.019978 |
+|ARI (constrative loss) | 0.329533  | 0.095221 |
+|ARI (triplet loss) | 0.775881 | 0.044944 |
 
 It can be seen that **the scores have certainly improved, but it is still low compared to the proposed**. I believe that these results have finally demonstrated the effectiveness of the proposed.
 We can obtain the above results with `inference_fair_comparison.py`. For visualization of embeddings, you can use `plot_embedding_fair_comparison.py`.
