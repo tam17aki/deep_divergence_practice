@@ -27,9 +27,8 @@ from hydra import compose, initialize
 from omegaconf import DictConfig
 
 from dataset import get_dataset
-from inference import load_checkpoint
 from model import get_model
-from util import get_device, init_manual_seed
+from util import get_device, init_manual_seed, load_checkpoint
 
 
 def plot_result(cfg, train_dataset, test_dataset, model):
