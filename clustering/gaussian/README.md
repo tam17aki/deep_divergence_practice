@@ -59,7 +59,7 @@ In order to make a fair comparison, **a mean vector was calculated for the basel
 |ARI (triplet loss) | 0.780103 | 0.049799 |
 
 It can be seen that **the scores have certainly improved, but it is still low compared to the proposed**. I believe that these results have finally demonstrated the effectiveness of the proposed.
-We can obtain the above results with `inference_fair_comparison.py`.
+We can obtain the above results with `inference_fair_comparison.py`. For visualization of embeddings, you can use `plot_embedding_fair_comparison.py`.
 
 ## Reference
 [1] Jason V. Davis and Inderjit Dhillon, "Differential entropic
