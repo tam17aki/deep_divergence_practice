@@ -46,8 +46,8 @@ training:
   pair_miner:
     name: PairMarginMiner
     params:
-      pos_margin: 0.2  # 0.2 for default
-      neg_margin: 0.8  # 0.8 for default
+      pos_margin: 0.0  # 0.2 for default
+      neg_margin: 1.0  # 0.8 for default
   reducers:
     name: ThresholdReducer
     params:
