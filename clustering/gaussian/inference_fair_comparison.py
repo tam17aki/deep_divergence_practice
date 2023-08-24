@@ -101,8 +101,8 @@ def get_embeddings(cfg, model, dataset):
     for i, batch in enumerate(dataloader):
         data, label = batch
         data, label = data.float().to(device), label.long().to(device)
-        data = data.mean(dim=1)
         embed = model.forward(data)
+        embed = embed.mean(dim=1)
         if i == 0:
             labels = torch.zeros(len(dataset), 1, device=device, dtype=label.dtype)
             embeddings = torch.zeros(
