@@ -21,6 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 from hydra import compose, initialize
@@ -54,10 +56,21 @@ def plot_result(cfg, train_dataset, test_dataset, model):
         )
     plt.legend()
     plt.title(f"Embedding on train data ({cfg.training.loss_type} loss)")
+    image_dir = os.path.join(cfg.directory.root_dir, cfg.directory.image_dir)
+    os.makedirs(image_dir, exist_ok=True)
     if cfg.model.euc_dist is False:
-        plt.savefig(cfg.training.loss_type + "_" + cfg.inference.embed_fig_file)
+        plt.savefig(
+            os.path.join(
+                image_dir, cfg.training.loss_type + "_" + cfg.inference.embed_fig_file
+            )
+        )
     else:
-        plt.savefig(cfg.training.loss_type + "_" + cfg.inference.embed_fig_euc_file)
+        plt.savefig(
+            os.path.join(
+                image_dir,
+                cfg.training.loss_type + "_" + cfg.inference.embed_fig_euc_file,
+            )
+        )
     plt.show()
 
     for cluster_id in np.unique(labels_test):
@@ -70,10 +83,18 @@ def plot_result(cfg, train_dataset, test_dataset, model):
     plt.legend()
     plt.title(f"Embedding on test data ({cfg.training.loss_type} loss)")
     if cfg.model.euc_dist is False:
-        plt.savefig(cfg.training.loss_type + "_" + cfg.inference.embed_test_fig_file)
+        plt.savefig(
+            os.path.join(
+                image_dir,
+                cfg.training.loss_type + "_" + cfg.inference.embed_test_fig_file,
+            )
+        )
     else:
         plt.savefig(
-            cfg.training.loss_type + "_" + cfg.inference.embed_test_fig_euc_file
+            os.path.join(
+                image_dir,
+                cfg.training.loss_type + "_" + cfg.inference.embed_test_fig_euc_file,
+            )
         )
     plt.show()
 
