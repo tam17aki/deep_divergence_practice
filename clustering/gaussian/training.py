@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import os
 from collections import namedtuple
 
 import torch
@@ -33,7 +32,7 @@ from dataset import get_dataset
 from factory import get_loss_miner, get_optimizer
 from model import get_model
 from util import (append_stats, calc_accuracy, get_device, init_manual_seed,
-                  init_stats, print_stats)
+                  init_stats, print_stats, save_checkpoint)
 
 
 def get_training_modules(cfg: DictConfig, device):
@@ -67,23 +66,6 @@ def training_loop(cfg: DictConfig, dataset, modules, device):
             loss = loss_func(embeds, indices_tuple=mining_func(embeds, labels))
             loss.backward()
             optimizer.step()
-
-
-def save_checkpoint(cfg: DictConfig, model, seed=0):
-    """Save checkpoint."""
-    model_dir = os.path.join(cfg.directory.root_dir, cfg.directory.model_dir)
-    os.makedirs(model_dir, exist_ok=True)
-    if cfg.model.euc_dist is False:  # moment matching
-        model_file = (
-            cfg.training.loss_type + "_" + f"seed{seed}_" + cfg.training.model_file
-        )
-        model_file = os.path.join(model_dir, model_file)
-    else:  # Euclidean distance
-        model_file = (
-            cfg.training.loss_type + "_" + f"seed{seed}_" + cfg.training.model_euc_file
-        )
-        model_file = os.path.join(model_dir, model_file)
-    torch.save(model.state_dict(), model_file)
 
 
 def main(cfg: DictConfig):
