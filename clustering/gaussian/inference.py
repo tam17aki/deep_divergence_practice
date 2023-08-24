@@ -21,10 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import os
 import warnings
 
-import torch
 from hydra import compose, initialize
 from omegaconf import DictConfig, OmegaConf
 from progressbar import progressbar as prg
@@ -32,26 +30,9 @@ from progressbar import progressbar as prg
 from dataset import get_dataset
 from model import get_model
 from util import (append_stats, calc_accuracy, get_device, init_manual_seed,
-                  init_stats, print_stats)
+                  init_stats, load_checkpoint, print_stats)
 
 warnings.simplefilter("ignore", UserWarning)
-
-
-def load_checkpoint(cfg: DictConfig, model, seed=0):
-    """Load checkpoint."""
-    model_dir = os.path.join(cfg.directory.root_dir, cfg.directory.model_dir)
-    if cfg.model.euc_dist is False:  # moment matching
-        model_file = (
-            cfg.training.loss_type + "_" + f"seed{seed}_" + cfg.training.model_file
-        )
-        model_file = os.path.join(model_dir, model_file)
-    else:  # Euclidean distance
-        model_file = (
-            cfg.training.loss_type + "_" + f"seed{seed}_" + cfg.training.model_euc_file
-        )
-        model_file = os.path.join(model_dir, model_file)
-    checkpoint = torch.load(model_file)
-    model.load_state_dict(checkpoint)
 
 
 def main(cfg: DictConfig):
