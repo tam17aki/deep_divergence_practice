@@ -77,10 +77,10 @@ class Embedding(nn.Module):
         for i, batch in enumerate(dataloader):
             data, label = batch
             data, label = data.float().to(device), label.long().to(device)
+            embed = self.forward(data)
             if self.cfg.model.euc_dist is False:  # use moment matching
                 # compute mean over points on empirical dist.
-                data = data.mean(dim=1)  # this comes from moment matching div.
-            embed = self.forward(data)
+                embed = embed.mean(dim=1)  # this comes from moment matching div.
             if i == 0:
                 labels = torch.zeros(len(dataset), 1, device=device, dtype=label.dtype)
                 embeddings = torch.zeros(
