@@ -45,7 +45,7 @@ You can run `plot_dataset.py` to plot the dataset. You can also run `plot_embedd
 | baseline (triplet loss) | 0.238092 | 0.029025 |
 | proposed (triplet loss) | **0.970267** | 0.022193 |
 
-I could reproduce almost the sample results. However, I consider that this experiment is **not a fair comparison** between the baseline and the proposed. Because the baseline clusters all 25,000 (= 500 * 50) points, whereas the proposed clusters only 500 points, putting the baseline at a huge disadvantage. We can obtain the above results with `inference.py`.
+I could reproduce almost the sample results. However, I consider that this experiment is **not a fair comparison** between the baseline and the proposed. Because the baseline clusters all 25,000 (= 500 * 50) points, whereas the proposed clusters only 500 points, putting the baseline at a huge disadvantage. We can obtain the above results with `training.py` and `inference.py`.
 
 In order to make a fair comparison, **a mean vector was calculated for the baseline in units of the empirical distribution after embedding**, and the resulting 500 points were clustered. The results are shown in the following table.
 
@@ -57,7 +57,7 @@ In order to make a fair comparison, **a mean vector was calculated for the basel
 |ARI (triplet loss) | 0.780103 | 0.049799 |
 
 It can be seen that the baseline score has certainly improved, but it is still low compared to the proposed. We believe that these results have finally demonstrated the effectiveness of the proposed.
-We can obtain the above results with `inference_fair_comparison.py`.
+We can obtain the above results with training.py` and `inference_fair_comparison.py`.
 
 ## Reference
 [1] Jason V. Davis and Inderjit Dhillon, "Differential entropic
