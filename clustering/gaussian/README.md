@@ -1,3 +1,5 @@
+# Clustering Multivariate Gaussian Distributions
+
 ## Recipes
 1. Edit `config.yaml` in accordance with your environment. It contains settings for experimental conditions. For immediate use, you can edit mainly the directory paths (`root_dir`).
 
