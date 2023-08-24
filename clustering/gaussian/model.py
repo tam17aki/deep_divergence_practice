@@ -76,7 +76,7 @@ class Embedding(nn.Module):
         end = 0
         for i, batch in enumerate(dataloader):
             data, label = batch
-            data, label = data.to(device).float(), label.to(device).long()
+            data, label = data.float().to(device), label.long().to(device)
             if self.cfg.model.euc_dist is False:  # use moment matching
                 # compute mean over points on empirical dist.
                 data = data.mean(dim=1)  # this comes from moment matching div.
