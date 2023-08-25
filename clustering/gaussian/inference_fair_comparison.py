@@ -21,8 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import warnings
-
 import numpy as np
 import torch
 from hydra import compose, initialize
@@ -38,8 +36,6 @@ from model import get_model
 from util import (KMeans, KNeighborsClassifier, append_stats, get_device,
                   init_manual_seed, init_stats, load_checkpoint, one_hot,
                   print_stats, purity_score)
-
-warnings.simplefilter("ignore", UserWarning)
 
 
 def get_dataset(cfg, seed):
