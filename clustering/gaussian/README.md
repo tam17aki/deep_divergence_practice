@@ -11,7 +11,7 @@ You can change loss type and miner type by editing `config.yaml`.
 
 4. Run `entropic_clustering.py`. It performs training and prediction of the method proposed by "Davis & Dhillon" [1].
 
-You can run `plot_dataset.py` to plot the dataset. You can also run `plot_embedding.py` to plot embeddings with trained model.
+
 
 ## Results
 
@@ -41,13 +41,29 @@ I could reproduce almost the same results.
 
 ## Bonus
 
+### Visualization of dataset
+
+You can run `plot_dataset.py` to plot the dataset. 
+
+![Figure 1](https://github.com/tam17aki/deep_divergence_practice/blob/main/clustering/gaussian/img/dataset.png?raw=true)
+
+We can generate **500** Gaussian mean vectors around the circumference of three concentric circles with different radii (for training; another 200 for testing). The radii of the concentric circles are **0.2, 0.6, 1.0**, respectively, and the three concentric circles correspond to the three clusters, respectively. One mean vector is obtained by randomly sampling points on the circle and superimposing two-dimensional Gaussian noise. The size of the noise at this time was not specified in the paper, but in this experiment, it was set to **standard deviation 0.05** in each dimension. The above corresponds to the leftmost part of the figure. Coloring makes it easier to see the corresponding clusters.
+
+Then randomly sample a number of points from each Gaussian distribution; **A diagonal covariance matrix is assumed and each diagonal element is set to 0.1**. Multiple 2D Gaussian noises scaled by $\sqrt{0.1}$ are generated independently and added to each mean vector. Although the paper did not specify how many points to sample, Figure 1 in the paper shows a scatter plot after sampling 50 points from each Gaussian distribution, I also sampled **50** points per Gaussian distribution. The middle three scatterplots in the figure show point clouds randomly sampled from the Gaussian distribution of each cluster. On the far right is the superposition of all three scatterplots. Note that it has a two-step structure, sampling the mean vector and sampling from the corresponding Gaussian distribution.
+
+Finally, we have a training point cloud of $500 \times 50 = 25,000$ points and a test point cloud of $200 \times 50 = 10,000$ points, each of which belongs to one of three clusters (= is labeled). As can be seen from the figure, the point clouds of each cluster overlap each other significantly due to the large variance.
+
+### Visualization of embeddings
+
+You can run `plot_embedding.py` to plot embeddings with trained model.
+
 The following figure shows an embedding visualization for the baseline. It is a visualization on the training data, and the embedding network trained with the triplet loss function is used.
 
-![Figure 1](https://github.com/tam17aki/deep_divergence_practice/blob/main/clustering/gaussian/img/triplet_embed_train_euc.png?raw=true)
+![Figure 2](https://github.com/tam17aki/deep_divergence_practice/blob/main/clustering/gaussian/img/triplet_embed_train_euc.png?raw=true)
 
 Next, the following shows an embedding visualization for the proposed. It is also a visualization on the training data, and the network was also trained with the same loss funciton.
 
-![Figure 2](https://github.com/tam17aki/deep_divergence_practice/blob/main/clustering/gaussian/img/triplet_embed_train.png?raw=true)
+![Figure 3](https://github.com/tam17aki/deep_divergence_practice/blob/main/clustering/gaussian/img/triplet_embed_train.png?raw=true)
 
 ## Reference
 [1] Jason V. Davis and Inderjit Dhillon, "Differential entropic
