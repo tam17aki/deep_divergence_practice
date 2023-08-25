@@ -80,6 +80,7 @@ def get_dataset(cfg, seed):
     return train_dataset, test_dataset
 
 
+@torch.inference_mode()
 def get_embeddings(cfg, model, dataset):
     """Return embeddings.
 
