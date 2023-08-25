@@ -39,6 +39,16 @@ The experimental results are shown in the following; averaged over 10 runs while
 
 I could reproduce almost the same results.
 
+## Bonus
+
+The following figure shows an embedding visualization for the baseline. It is a visualization on the training data, and the embedding network trained with the triplet loss function is used.
+
+![Figure 1](https://github.com/tam17aki/deep_divergence_practice/blob/main/clustering/gaussian/img/triplet_embed_train_euc.png?raw=true)
+
+Next, the following shows an embedding visualization for the proposed. It is also a visualization on the training data, and the network was also trained with the same loss funciton.
+
+![Figure 2](https://github.com/tam17aki/deep_divergence_practice/blob/main/clustering/gaussian/img/triplet_embed_train.png?raw=true)
+
 ## Reference
 [1] Jason V. Davis and Inderjit Dhillon, "Differential entropic
     clustering of multivariate Gaussians," In Advances in Neural
