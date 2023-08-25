@@ -55,7 +55,7 @@ def plot_result(cfg, train_dataset, test_dataset, model):
             label=f"cluster {cluster_id}",
         )
     plt.legend()
-    plt.title(f"Embedding on train data ({cfg.training.loss_type} loss)")
+    plt.title(f"Embedding on training data ({cfg.training.loss_type} loss)")
     image_dir = os.path.join(cfg.directory.root_dir, cfg.directory.image_dir)
     os.makedirs(image_dir, exist_ok=True)
     if cfg.model.euc_dist is False:
