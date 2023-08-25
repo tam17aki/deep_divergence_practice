@@ -37,19 +37,7 @@ The experimental results are shown in the following; averaged over 10 runs while
 | baseline (triplet loss) | 0.238126 | 0.028162 |
 | proposed (triplet loss) | **0.983881** | 0.013887 |
 
-I could reproduce almost the sample results. However, I consider that this experiment is **not a fair comparison** between the baseline and the proposed method. Because the baseline clusters all 25,000 (= 500 * 50) points, whereas the proposed method clusters only 500 points (= distributions).
-
-In order to make a fair comparison, also for the baseline, **a mean vector is computed per empirical distribution after embedding**, and the resulting 500 points will be clustered. The re-calculated metrics of the baseline are shown in the following table.
-
-| Metrics (loss function)| Mean | Std dev. |
-| --- | --- | --- |
-|RI (constrative loss) | 0.972352 | 0.017127 |
-|RI (triplet loss) | 0.986995 | 0.005775 |
-|ARI (constrative loss) | 0.937757 | 0.038647 |
-|ARI (triplet loss) | 0.970741 | 0.013020 |
-
-We can see that the scores has been improved significantly and **achieve almost equal level compared to the proposed method**, but the "average" was still slightly worse.
-We can obtain the above results with `inference_fair_comparison.py`. For visualization of embeddings, you can use `plot_embedding_fair_comparison.py`.
+I could reproduce almost the same results.
 
 ## Reference
 [1] Jason V. Davis and Inderjit Dhillon, "Differential entropic
