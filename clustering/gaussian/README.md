@@ -1,6 +1,6 @@
 # Clustering Multivariate Gaussian Distributions
 
-## Recipes
+## Recipe
 1. Edit `config.yaml` in accordance with your environment. It contains settings for experimental conditions. For immediate use, you can edit mainly the directory paths (`root_dir`).
 
 2. Run `training.py`. It performs model training.
