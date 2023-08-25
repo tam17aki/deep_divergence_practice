@@ -59,7 +59,7 @@ class Embedding(nn.Module):
         outputs = self.fc_out(hidden)
         return outputs
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def get_embeddings(self, dataset):
         """Return embeddings.
 
