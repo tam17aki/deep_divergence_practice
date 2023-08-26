@@ -12,6 +12,7 @@ We tested the implemention on Ubuntu 22.04. The verion of Python was `3.10.12`. 
 - PyTorch (torch)
 - Hydra (hydra-core)
 - progressbar2
+- Numba (numba)
 - Numpy (numpy)
 - scikit-learn (sklearn)
 - [pytorch-metric-learning](https://github.com/KevinMusgrave/pytorch-metric-learning#installation) 
