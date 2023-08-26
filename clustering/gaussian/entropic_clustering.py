@@ -35,7 +35,7 @@ from dataset import make_circles_triple
 from util import append_stats, init_stats, one_hot, print_stats, purity_score
 
 
-@jit(nopython=True)
+@jit(nopython=True, cache=True)
 def comp_burg_div(mat_x, mat_y):
     """Compute Burg matrix divergence."""
     dim = mat_x.shape[0]
@@ -45,7 +45,7 @@ def comp_burg_div(mat_x, mat_y):
     return burg_div
 
 
-@jit(nopython=True)
+@jit(nopython=True, cache=True)
 def comp_maha_dist(vec_x, vec_y, cov):
     """Compute Mahalanobis distance."""
     delta = vec_x - vec_y
