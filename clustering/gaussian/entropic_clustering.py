@@ -22,10 +22,10 @@ SOFTWARE.
 """
 import numpy as np
 from hydra import compose, initialize
+from numba import jit
 from numpy import linalg as LA
 from omegaconf import OmegaConf
 from progressbar import progressbar as prg
-from scipy.spatial import distance
 from sklearn.metrics import accuracy_score, homogeneity_score, roc_auc_score
 from sklearn.metrics.cluster import (adjusted_mutual_info_score,
                                      adjusted_rand_score,
@@ -35,6 +35,7 @@ from dataset import make_circles_triple
 from util import append_stats, init_stats, one_hot, print_stats, purity_score
 
 
+@jit(nopython=True)
 def comp_burg_div(mat_x, mat_y):
     """Compute Burg matrix divergence."""
     dim = mat_x.shape[0]
@@ -44,9 +45,12 @@ def comp_burg_div(mat_x, mat_y):
     return burg_div
 
 
-def comp_maha_dist(vec_a, vec_b, cov):
+@jit(nopython=True)
+def comp_maha_dist(vec_x, vec_y, cov):
     """Compute Mahalanobis distance."""
-    return distance.mahalanobis(vec_a, vec_b, LA.inv(cov))
+    delta = vec_x - vec_y
+    dist = np.dot(np.dot(delta, np.atleast_2d(LA.inv(cov))), delta)
+    return np.sqrt(dist)
 
 
 class EntropicClustering:
@@ -63,7 +67,7 @@ class EntropicClustering:
         self.n_samples = cfg.training.n_train
         self.n_epoch = cfg.training.n_epoch
         rng = np.random.default_rng(seed)
-        self.gamma = rng.choice(self.n_clusters, self.n_samples)  # cluster assignments
+        self.assign = rng.choice(self.n_clusters, self.n_samples)  # cluster assignments
         self.stats = {"mean": None, "cov": None}
         self.cluster_means = [None] * self.n_clusters
         self.cluster_covs = [None] * self.n_clusters
@@ -78,13 +82,13 @@ class EntropicClustering:
                     self.stats["mean"][i], self.cluster_means[j], self.cluster_covs[j]
                 )
                 assign.append(burg_div + maha_dist)
-            self.gamma[i] = np.argmin(np.array(assign))
+            self.assign[i] = np.argmin(np.array(assign))
 
     def _mstep(self):
         """Update cluster means and cluster covariances."""
         for j in range(self.n_clusters):
-            idx = np.argwhere(self.gamma == j).squeeze()
-            n_count = len(np.where(self.gamma == j)[0])
+            idx = np.argwhere(self.assign == j).squeeze()
+            n_count = len(np.where(self.assign == j)[0])
             if n_count == 0:
                 continue
             if n_count == 1:
@@ -121,7 +125,7 @@ class EntropicClustering:
             covs: list of covariance matrices.
         """
         n_samples = len(means)
-        gamma = [0] * n_samples
+        assignment = [0] * n_samples
         for i in range(n_samples):
             assign = []
             for j in range(self.n_clusters):
@@ -130,8 +134,8 @@ class EntropicClustering:
                     means[i], self.cluster_means[j], self.cluster_covs[j]
                 )
                 assign.append(burg_div + maha_dist)
-            gamma[i] = np.argmin(np.array(assign))
-        return np.array(gamma)
+            assignment[i] = np.argmin(np.array(assign))
+        return np.array(assignment)
 
 
 def get_dataset(cfg, seed):
