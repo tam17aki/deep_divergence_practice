@@ -24,13 +24,14 @@ SOFTWARE.
 import os
 import warnings
 
-import faiss
 import numpy as np
 import torch
+from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score, homogeneity_score, roc_auc_score
 from sklearn.metrics.cluster import (adjusted_mutual_info_score,
                                      adjusted_rand_score, contingency_matrix,
                                      normalized_mutual_info_score, rand_score)
+from sklearn.neighbors import KNeighborsClassifier
 
 warnings.simplefilter("ignore", UserWarning)
 
@@ -59,51 +60,6 @@ def get_device():
     return "cuda" if torch.cuda.is_available() else "cpu"
 
 
-class KMeans:
-    """k-means clustering."""
-
-    def __init__(self, n_clusters=3, **kwargs):
-        """Initialize the class."""
-        self.kwargs = kwargs
-        self.kmeans = None
-        self.n_clusters = n_clusters
-
-    def fit(self, data):
-        """Compute k-means clustering."""
-        _, dim = data.shape
-        self.kmeans = faiss.Kmeans(dim, self.n_clusters, **self.kwargs)
-        self.kmeans.train(data)
-
-    def predict(self, query):
-        """Predict the closest cluster each sample in the query belongs to."""
-        _, idxs = self.kmeans.index.search(query, 1)
-        pred = np.array([int(n[0]) for n in idxs])
-        return pred
-
-
-class KNeighborsClassifier:
-    """Classifier implementing the k-nearest neighbors vote."""
-
-    def __init__(self, k=3, **kwargs):
-        """Initialize the class."""
-        self.kwargs = kwargs
-        self.knn = None
-        self.k = k
-        self.labels = None  # reference labels
-
-    def fit(self, data, labels):
-        """Fit the k-nearest neighbors classifier from the training dataset."""
-        self.knn = faiss.IndexFlatL2(data.shape[1])
-        self.knn.add(data)
-        self.labels = labels
-
-    def predict(self, query):
-        """Predict the class labels for the provided data."""
-        _, indices = self.knn.search(query, k=self.k)
-        preds = np.array([np.argmax(np.bincount(x)) for x in self.labels[indices]])
-        return preds
-
-
 def calc_accuracy(cfg, train_dataset, test_dataset, model, seed=0):
     """Compute various accuracy metrics.
 
@@ -128,13 +84,14 @@ def calc_accuracy(cfg, train_dataset, test_dataset, model, seed=0):
 
     kmeans = KMeans(
         n_clusters=cfg.inference.n_clusters,
-        niter=cfg.inference.n_iter_kmeans,
-        seed=seed,
+        n_init="auto",
+        max_iter=cfg.inference.n_iter_kmeans,
+        random_state=seed,
     )
     kmeans.fit(embeds["train"])
     pred_kmeans = kmeans.predict(embeds["test"])
 
-    knn = KNeighborsClassifier(k=cfg.inference.top_k)
+    knn = KNeighborsClassifier(n_neighbors=cfg.inference.n_neighbors)
     knn.fit(embeds["train"], labels["train"])
     pred_knn = knn.predict(embeds["test"])
 
