@@ -2,7 +2,6 @@
 """Provides utilities.
 
 Copyright (C) 2023 by Akira TAMAMORI
-Copyright (C) 2019 by Kevin Musgrave
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +27,6 @@ import warnings
 import faiss
 import numpy as np
 import torch
-from pytorch_metric_learning.utils.inference import FaissKNN
 from sklearn.metrics import accuracy_score, homogeneity_score, roc_auc_score
 from sklearn.metrics.cluster import (adjusted_mutual_info_score,
                                      adjusted_rand_score, contingency_matrix,
@@ -62,10 +60,7 @@ def get_device():
 
 
 class KMeans:
-    """k-means clustering.
-
-    This implementation is a fork from PyTorch Metric Learning.
-    """
+    """k-means clustering."""
 
     def __init__(self, n_clusters=3, **kwargs):
         """Initialize the class."""
@@ -82,34 +77,34 @@ class KMeans:
 
     def predict(self, query):
         """Predict the closest cluster each sample in the query belongs to."""
+        query = query.to("cpu").detach().numpy().copy().astype(np.float32)
         _, idxs = self.kmeans.index.search(query, 1)
-        return torch.tensor([int(n[0]) for n in idxs], dtype=int, device=query.device)
+        pred = np.array([int(n[0]) for n in idxs]).astype(np.int)
+        return pred
 
 
 class KNeighborsClassifier:
-    """Classifier implementing the k-nearest neighbors vote.
-
-    This implementation is a fork from PyTorch Metric Learning.
-    """
+    """Classifier implementing the k-nearest neighbors vote."""
 
     def __init__(self, k=3, **kwargs):
         """Initialize the class."""
         self.kwargs = kwargs
         self.knn = None
         self.k = k
-        self.ref = None  # reference data
         self.labels = None  # reference labels
 
     def fit(self, data, labels):
         """Fit the k-nearest neighbors classifier from the training dataset."""
-        self.knn = FaissKNN()
-        self.ref = data
-        self.labels = labels
+        data = data.to("cpu").detach().numpy().copy().astype(np.float32)
+        self.knn = faiss.IndexFlatL2(data.shape[1])
+        self.knn.add(data)
+        self.labels = labels.to("cpu").detach().numpy().copy().astype(np.int)
 
     def predict(self, query):
         """Predict the class labels for the provided data."""
-        _, indices = self.knn(query, self.k, self.ref, False)
-        preds = torch.mode(self.labels[indices])[0]
+        query = query.to("cpu").detach().numpy().copy().astype(np.float32)
+        _, indices = self.knn.search(query, k=self.k)
+        preds = np.array([np.argmax(np.bincount(x)) for x in self.labels[indices]])
         return preds
 
 
@@ -134,16 +129,13 @@ def calc_accuracy(cfg, train_dataset, test_dataset, model, seed=0):
         n_clusters=cfg.inference.n_clusters,
         niter=cfg.inference.n_iter_kmeans,
         seed=seed,
-        gpu=True,
     )
     kmeans.fit(embeds["train"])
     pred_kmeans = kmeans.predict(embeds["test"])
-    pred_kmeans = pred_kmeans.to("cpu").detach().numpy().copy()
 
     knn = KNeighborsClassifier(k=cfg.inference.top_k)
     knn.fit(embeds["train"], labels["train"])
     pred_knn = knn.predict(embeds["test"])
-    pred_knn = pred_knn.to("cpu").detach().numpy().copy()
 
     labels["test"] = labels["test"].to("cpu").detach().numpy().copy()
     return {
