@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-import warnings
 
 import numpy as np
 import torch
@@ -32,8 +31,6 @@ from sklearn.metrics.cluster import (adjusted_mutual_info_score,
                                      adjusted_rand_score, contingency_matrix,
                                      normalized_mutual_info_score, rand_score)
 from sklearn.neighbors import KNeighborsClassifier
-
-warnings.simplefilter("ignore", UserWarning)
 
 
 def init_manual_seed(random_seed: int):
