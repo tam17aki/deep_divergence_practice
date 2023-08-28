@@ -63,7 +63,7 @@ training:
 inference:
   n_trial: 10
   n_batch: 32
-  top_k: 5  # number of nearest neighbors
+  n_neighbors: 5  # number of nearest neighbors
   n_iter_kmeans: 300
   n_clusters: 3
   dataset_fig_file: "dataset.png"
