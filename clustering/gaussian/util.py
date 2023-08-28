@@ -70,16 +70,14 @@ class KMeans:
 
     def fit(self, data):
         """Compute k-means clustering."""
-        data = data.to("cpu").detach().numpy().copy().astype(np.float32)
         _, dim = data.shape
         self.kmeans = faiss.Kmeans(dim, self.n_clusters, **self.kwargs)
         self.kmeans.train(data)
 
     def predict(self, query):
         """Predict the closest cluster each sample in the query belongs to."""
-        query = query.to("cpu").detach().numpy().copy().astype(np.float32)
         _, idxs = self.kmeans.index.search(query, 1)
-        pred = np.array([int(n[0]) for n in idxs]).astype(np.int)
+        pred = np.array([int(n[0]) for n in idxs])
         return pred
 
 
@@ -95,14 +93,12 @@ class KNeighborsClassifier:
 
     def fit(self, data, labels):
         """Fit the k-nearest neighbors classifier from the training dataset."""
-        data = data.to("cpu").detach().numpy().copy().astype(np.float32)
         self.knn = faiss.IndexFlatL2(data.shape[1])
         self.knn.add(data)
-        self.labels = labels.to("cpu").detach().numpy().copy().astype(np.int)
+        self.labels = labels
 
     def predict(self, query):
         """Predict the class labels for the provided data."""
-        query = query.to("cpu").detach().numpy().copy().astype(np.float32)
         _, indices = self.knn.search(query, k=self.k)
         preds = np.array([np.argmax(np.bincount(x)) for x in self.labels[indices]])
         return preds
@@ -125,6 +121,11 @@ def calc_accuracy(cfg, train_dataset, test_dataset, model, seed=0):
     embeds["train"], labels["train"] = model.get_embeddings(train_dataset)
     embeds["test"], labels["test"] = model.get_embeddings(test_dataset)
 
+    embeds["train"] = embeds["train"].to("cpu").detach().numpy().copy()
+    embeds["test"] = embeds["test"].to("cpu").detach().numpy().copy()
+    labels["train"] = labels["train"].to("cpu").detach().numpy().copy()
+    labels["test"] = labels["test"].to("cpu").detach().numpy().copy()
+
     kmeans = KMeans(
         n_clusters=cfg.inference.n_clusters,
         niter=cfg.inference.n_iter_kmeans,
@@ -137,7 +138,6 @@ def calc_accuracy(cfg, train_dataset, test_dataset, model, seed=0):
     knn.fit(embeds["train"], labels["train"])
     pred_knn = knn.predict(embeds["test"])
 
-    labels["test"] = labels["test"].to("cpu").detach().numpy().copy()
     return {
         "ri": rand_score(labels["test"], pred_kmeans),
         "ari": adjusted_rand_score(labels["test"], pred_kmeans),
