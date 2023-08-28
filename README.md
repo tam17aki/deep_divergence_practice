@@ -16,7 +16,6 @@ We tested the implemention on Ubuntu 22.04. The verion of Python was `3.10.12`. 
 - Numpy (numpy)
 - scikit-learn (sklearn)
 - [pytorch-metric-learning](https://github.com/KevinMusgrave/pytorch-metric-learning#installation) 
-- faiss-gpu https://pypi.org/project/faiss-gpu/
 
 ## Directory
 - `clustering` ... Corresponding to the Section 5.1.
